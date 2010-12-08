@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset=utf-8 />
+    <title>007 - Distributed software agents</title>
+    <style type="text/css">
+      <!--
+        body {
+          width:800px;
+        }
+        img {
+          border:1px solid black;
+        }
+      -->
+    </style>
+  </head>
+  <body>
+      <h1>007 - Distributed software agents</h1>
+      <div><em>ID2212 programming project by Daniel Abrahamsson (danabr@kth.se)</em></div>
+      
+      <section>
+        <h2>Overview</h2>
+        <p>
+          007 is a distributed software agent system. Software agents traverse agent servers
+          in order to perform some task. This project aims at providing the basic infrastructure
+          for such a system, as well as an implementation to show off the system's capabilities.
+        </p>
+        <p>
+          The example agents organizes and plays Rock/Paper/Scissors tournaments. A full
+          description of the system can be found in the dedicated section below.
+        </p>
+      </section>
+      <section>
+        <h2>Where to find it</h2>
+        <p>
+          The Netbeans project, with source, documentation and runnables, is downloadable from 
+          <a href="https://github.com/danabr/007">Github</a> (see the Downloads button).<br/>
+          The git repository itself contains only source code, as well as this file.
+        </p>
+      </section>
+      <section>
+        <h2>How to run</h2>
+        <p>
+          You have multiple options to run servers or clients.
+          No matter which option you choose, the following example
+          commands assume that the project directory is your 
+          current working directory.
+        </p>
+        <section>
+          <h3>Starting a single server</h3>
+          <p>
+            You start a single server by invoking: <br/>
+            <code>java -cp build\classes agent.server.BasicServer &lt;serverport&gt; [&lt;multicast ip&gt; &lt;multicast port&gt;]</code><br/>
+            The multicast arguments are optional.
+          </p>
+        </section>
+        <section>
+          <h3>Starting multiple servers at once</h3>
+          <p>
+            You may start multiple servers at once, all attached to the same multicast ip and port,
+            by invoking the following command: <br/>
+            <code>java -cp build\classes rps.ServerRunner &lt;numservers&gt; [&lt;multicast ip&gt; &lt;multicast port&gt;]</code>
+            <br/>
+            The servers will start consecutively on port 10000, 10001, etc.
+            Note that the multicast arguments are optional.
+          </p>
+        </section>
+        <section>
+          <h3>Starting a client</h3>
+          <p>
+            You start a single client by invoking the command:<br/>
+            <code>java -cp build\classes rps.RPSClient &lt;clientport&gt; [&lt;multicast ip&gt; &lt;multicast port&gt;]</code>
+            <br/>The multicast arguments are optional.
+          </p>
+        </section>
+      </section>
+      <section>
+        <h2>Technologies and platforms</h2>
+        <p>
+            The project was developed and tested using Netbeans on a Dell XPS M1330 machine
+            running Windows 7.
+        </p>
+        <p>
+          Only technologies part of Java SE 6 was used.
+        </p>
+      </section>
+      <section>
+        <h2>Implementation details</h2>
+        <p>
+          This section outlines the framework part of the system.
+        </p>
+        <section>
+          <h3>Basic structure</h3>
+          <img src="framework.png" /><br/>
+          <em>The agent framework's package structure</em>
+          <p>
+            All framework related classes are placed under the <em>agent</em> package and 
+            its subpackages. These packages contain both interfaces, abstract classes handling
+            the common cases and full implementations that are generally useful.
+          </p>
+          <p>
+            The normal start phase for implementing an agent would be to use BasicServer as
+            the server, extend BasicClient to create a client, and than extend AbstractAgent
+            in order to implement the agent.
+          </p>
+        </section>
+        <section>
+          <h3>Server related parts</h3>
+          <p>
+            The most general part of the server related parts is the
+            <em>AgentServer</em> interface. It contains the minimal set
+            of operations an agent server must provide. These include support for
+            agent migration, footprint support, neighbour discovery support, and 
+            support for getting a list of residing agents.
+          </p>
+          <p>
+            The <em>AbstractServer</em> class implements the common parts of an
+            abstract server, such as agent migration, storing of footprints and
+            updating the list of residing agents.
+          </p>
+          <p>
+            The <em>server.BasicServer</em> class is a full server implementation,
+            capable of discovering neighbouring servers. It is basic in the
+            sense that it does not contain support for anything but invoking
+            agents.
+          </p>
+        </section>
+        <section>
+          <h3>Client related parts</h3>
+          <p>
+            The only client related class is the <em>client.BasicClient</em> class.
+            It is an abstract class that simplifies implementing simple clients
+            by taking care of server disovery and service point selection,
+            as well as sending and receiving agents. The real client implementation
+            is notified about different events through callbacks.
+          </p>
+        </section>
+        <section>
+          <h3>Agent related parts</h3>
+          <p>
+            The most important agent related part is the <em>Agent</em> interface.
+            It defines the minimal set of capabilities an agent must have, which
+            is to provide information about it's home location as well as a callback
+            that will be called when the agent has been migrated to a new server.
+          </p>
+          <p>
+            The <em>AbstractAgent</em> class encapsulates common agent functionality,
+            such as maintaining a list of visited servers, maintaining information of
+            the agent's home, and supporting agent migration.
+          </p>
+          <section>
+            <h4>Messaging agents</h4>
+            <p>
+              Messaging agents are agents capable of sending/receiving messages to/from other agents.
+              Messaging agents are useful when agents need to communicate in a safe way.
+              Support for messaging agents is provided through two classes: the abstract class
+              <em>MessagingAgent</em> with methods for posting and waiting for messages,
+              and the class <em>Message</em> that encapsulates message information. Both classes
+              are found in the <em>messaging</em> subpackage.
+            </p>
+          </section>
+          <section>
+            <h4>Stateful agents</h4>
+            <p>
+              The framework contains support for stateful agents through the
+              <em>State&lt;T&gt;</em> and <em>StateMatchine&lt;T&gt;</em> classes
+              in the <em>states</em> subpackage.
+              The reason to include such classes is that that states are often a natural
+              way to model agent behaviour.
+            </p>
+          </section>
+        </section>
+        <section>
+          <h3>Server discovery and discovery related classes</h3>
+          <p>
+            <em>BasicServer</em> and <em>BasicClient</em> both make use of the
+            classes under the <em>agent.discovery</em> package. This package contains
+            classes for performing multicast server discovery of neighbour agent servers.
+          </p>
+          <p>
+            Multicast was chosen for simplicity. However, it is limited as it can not be
+            used on wireless networks. A flooding based discovery mechanism would have
+            handled these issues, but is also more complicated to implement.
+          </p>
+          <section>
+            <h4>The discovery protocol</h4>
+            <p>
+                The protocol used for server discovery is very simple.
+                Clients (in the broader sense of the word) send the string
+                "DISVOVER" to a multicast group. It then listens for "REPLY"
+                messages, using the information in the UDP package to extract
+                server address and port number.
+            </p>
+            <p>
+              A server runs a discovery server, responsible for sending a "REPLY"
+              message to any client sending a "DISOVER" message. The server replies
+              using the port on which it is willing to receive agents.
+            </p>
+            <p>
+              The same mechanism is used for both server-server discovery and client-server
+              discovery. A richer protocol might be of interest for agents looking for servers
+              with certain capabilities, but no such protocol is provided at the framework level.
+            </p>
+          </section>
+        </section>
+      </section>
+      <section>
+        <h2>Rock/Paper/Scissors agents</h2>
+        <p>
+          Rock/Paper/Scissors (RPS) agents try to arrange RPS tournaments.
+          They travel around looking for other agents to join their tournament,
+          or joins someone else's tournament if it is bigger. Eventually, they
+          return home and relate about their journey.
+        </p>
+        <p>
+          RPS agents are stateful, message passing agents, taking advantage of all
+          the capabilities of <em>BasicServer</em>.
+        </p>
+        <section>
+          <h3>States</h3>
+          <img src="states.png"/>
+          <br/><em>RPS state diagram</em>
+          <p>
+            The above pictures summarizes the possible state transitions of an
+            agent playing the Rock/Paper/Scissors game. All agents start with a
+            state of <em>InitialState</em>. The following sections elaborates each state.
+          </p>
+          <section>
+            <h4>General states</h4>
+            <p>
+              The states in this section applies to both tournament participants
+              and tournament masters.
+            </p>
+            <section>
+              <h5>MoveHome state</h5>
+              <p>
+                This state migrates the agent to its home.
+              </p>
+            </section>
+          </section>
+          <section>
+            <h4>Tournament master states</h4>
+            <p>
+              The states in this section applies only to tournament masters.
+            </p>
+            <section>
+              <h5>Initial state</h5>
+              <p>
+                All RPS agents start in this state, meaning they are all tournament masters.
+                In this state, the agent marks the current server as the tournament server
+                and then moves on to the Find state.
+              </p>
+            </section>
+            <section>
+              <h5>Find state</h5>
+              <p>
+                In the Find state the agent goes through the list of agents on the same
+                server. If a neighbour is in the FindWait state, the agent asks
+                the neighbour to join his tournament. If the neighbour replies OK,
+                or does not answer, the agent goes on asking other neighbouring agents. 
+                If the neighbour instead replies that the agent should join his tournament,
+                the agent goes to the PrepareJoin state.
+              </p>
+              <p>
+                When the agent has gone through the full list of neighbours, he proceeds
+                to the FindWait state.
+              </p>
+            </section>
+            <section>
+              <h5>FindWait state</h5>
+              <p>
+                In the FindWait state, the agent waits for other agents to contact him with
+                a join request. If the agent receives such a request, he replies either:
+                <ul>
+                  <li>
+                    OK - if the other agent's tournament has more or equally many participants.
+                    In this case, the agent enters the PrepareJoin state.
+                  </li>
+                  <li>
+                    JOIN - if the agent's own tournament has more participants than the other agent's tournament has.
+                  </li>
+                </ul>
+              </p>
+              <p>
+                  When the agent has finished waiting, he continues to the FindContinue state.
+              </p>
+            </section>
+            <section>
+              <h5>FindContinue state</h5>
+              <p>
+                In the FindContinue state the agent checks if he has enough participants to host a tournament.
+                If so, the agent transition into the WaitForLatecomers state.
+              </p>
+              <p>
+                If the agent does not have enough participants, he tries to choose another
+                server to visit.
+              </p>
+              <p>
+                First, he looks through which agents have passed by recently.
+                He then follows the agent that most recently left the server
+                (entering the Find state),
+                as long as the footprint is not to old and that he has not met the
+                other agent before.
+              </p>
+              <p>
+                If the agent could not find anyone to follow, he asks the server
+                for a list of neighbouring servers. He then choses to travel to the
+                first server he has not visited before, entering the Find state.
+              </p>
+              <p>
+                If the agent does not find any server he has not visited before,
+                he decides to try to arrange the tournament anyway 
+                (entering the WaitForLatecomers state).
+              </p>
+            </section>
+            <section>
+              <h5>WaitForLatecomers state</h5>
+              <p>
+                In this state, the agent waits for any last minute
+                participants. Any agent asking to join during this
+                time will be added as a tournament participant.
+              </p>
+              <p>
+                When the agent has finished waiting, he enters the PrepareTournament state.
+              </p>
+            </section>
+            <section>
+              <h5>PrepareTournament state</h5>
+              <p>
+                In this state, the agent first checks how many of the participants
+                are still willing to participate. If there are not enough participants
+                (less than two), the tournament is cancelled and the tournament participants
+                are commanded to return home. In this case, the agent enters the MoveHome state.
+              </p>
+              <p>
+                If there are enough participants to continue the tournament, the agent
+                creates a match schema for all the remaining participants. This schema
+                is handed out to all participants. Eventually, the agent sends the start
+                message to all participants and enters the RunTournament state.
+              </p>
+            </section>
+            <section>
+              <h5>RunTournament state</h5>
+              <p>
+                In this state, the agent goes through all matches acting as a judge.
+                For each match, he calls out for the participants and registers the
+                result of each round. The first player reaching three points win.
+                If no player reaches three points in 9 rounds, the match is cancelled.
+                If one player fails to take part in the match, the other part is declared
+                as winner.
+              </p>
+              <p>
+                When all games have been played through. The agent calculates a score board
+                which it sends to all participants. Eventually, he enter the MoveHome state.
+              </p>
+            </section>
+          </section>
+          <section>
+            <h4>Tournament participant states</h4>
+            <p>
+              The states in this section applies only to tournament participants.
+            </p>
+            <section>
+              <h5>PrepareJoinState</h5>
+              <p>
+                If the agent had participants in his previous tournament, he goes
+                back to the tournament server and asks them to to join the new tournament.
+                Then, the agent enter the Slave state.
+              </p>
+            </section>
+            <section>
+              <h5>Slave state</h5>
+              <p>
+                  In this state, the agent patiently waits for commands from the tournament
+                  master. The possible messages are:
+                  <ul>
+                    <li>
+                      JOIN - The tournament master has joined a bigger tournament, and instructs the agent to do so too.
+                      The agent enters the JoinNewMaster state.
+                    </li>
+                    <li>
+                      GO_HOME - The tournament master failed to find enough participants, and the tournament was cancelled.
+                      The agent enters the MoveHome state.
+                    </li>
+                    <li>MATCHLIST - The tournament master hands out the match scheme.</li>
+                    <li>
+                      START - The tournament master announces that the tournament has started. 
+                      The agent enters the MatchPlaying state.
+                    </li>
+                  </ul>
+              </p>
+            </section>
+            <section>
+              <h5>JoinNewMaster state</h5>
+              <p>
+                The agent has been instructed to join a new master, so he waits
+                at the tournament server for the tournament master to return.
+                When he does, he asks the tournament master if he can join the
+                tournament. If the tournament master answered OK, the agent
+                enters the Slave state, otherwise he was to late and enters
+                the MoveHome state.
+              </p>
+            </section>
+            <section>
+              <h5>MatchPlaying state</h5>
+              <p>
+                In this state, the agent goes through the match schema,
+                looking for his next match. If there are no more matches,
+                the agent waits for statistics from the tournament master
+                and then enters the MoveHome state. If there are more matches
+                to play, the agent enters the Match state.
+              </p>
+            </section>
+            <section>
+              <h5>Match state</h5>
+              <p>
+                In this state, the agent plays a Rock/Paper/Scissors match
+                against another participant. He waits for the judge to become
+                ready, then answers the judge that he is ready, and then plays
+                his move as long as the judge tells him to do so.
+              </p>
+              <p>
+                When the match has finished, no matter if it was completed succesfully or
+                not, the agent returns to the MatchPlaying state.
+              </p>
+            </section>
+          </section>
+        </section>
+      </section>
+  </body>
+</html>
