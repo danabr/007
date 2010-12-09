@@ -7,6 +7,7 @@ import rps.RPSAgent;
 import java.util.List;
 
 /**
+ * Find other participants willing to join our tournament.
  * Only master agents may be in this state.
  * @author Daniel Abrahamsson
  */

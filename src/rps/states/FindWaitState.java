@@ -5,6 +5,7 @@ import rps.MessageTypes;
 import rps.RPSAgent;
 
 /**
+ * Wait for other tournament master to contact us regarding their tournaments.
  * Only master agents may be in this state.
  * @author Daniel Abrahamsson
  */

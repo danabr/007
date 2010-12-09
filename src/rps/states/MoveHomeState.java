@@ -3,7 +3,7 @@ package rps.states;
 import rps.RPSAgent;
 
 /**
- * State for moving home with some message;
+ * State for moving home.
  * @author Daniel Abrahamsson
  */
 public class MoveHomeState extends agent.states.State<RPSAgent> {

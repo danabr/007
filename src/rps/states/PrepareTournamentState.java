@@ -12,7 +12,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 /**
- * Time to prepare a tournament.
+ * Prepare a tournament.
  * @author Daniel Abrahamsson
  */
 public class PrepareTournamentState extends agent.states.State<RPSAgent> {

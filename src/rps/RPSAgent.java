@@ -91,6 +91,7 @@ public class RPSAgent extends MessagingAgent implements Serializable {
     @Override
     public void run() {
         while(currentState() != null && currentServer != null) {
+            System.out.println(getHome() + ": " + currentState());
             stateMachine.execute();
         }
     }

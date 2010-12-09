@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ * Decide where to go next to find participants.
  * Only master agents can be in this state.
  * @author Daniel Abrahamsson
  */

@@ -9,6 +9,8 @@ import agent.discovery.Peer;
 import java.util.Set;
 
 /**
+ * Prepare for joining a tournament by telling our own
+ * tournament participants to join the other tournament.
  * This state is only reachable by master agents.
  * @author Daniel Abrahamsson
  */

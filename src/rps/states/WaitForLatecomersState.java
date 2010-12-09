@@ -5,6 +5,7 @@ import rps.MessageTypes;
 import rps.RPSAgent;
 
 /**
+ * Wait for last minute participants.
  * This state is only possible for master agents.
  * @author Daniel Abrahamsson
  */
@@ -16,6 +17,7 @@ public class WaitForLatecomersState extends agent.states.State<RPSAgent> {
      * Executes state logic.
      * @param agent The agent to perform state logic on.
      */
+    @Override
     public void execute(RPSAgent agent) {
         long end = System.currentTimeMillis() + WAIT_TIME;
         while(System.currentTimeMillis() < end) {
