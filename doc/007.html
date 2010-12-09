@@ -53,6 +53,10 @@
             <code>java -cp build\classes agent.server.BasicServer &lt;serverport&gt; [&lt;multicast ip&gt; &lt;multicast port&gt;]</code><br/>
             The multicast arguments are optional.
           </p>
+          <p>
+            If you want to use a server capable of storing RPS statistics,
+            you can use the <em>rps.statistics.StatisticsServer</em> instead, with the same arguments.
+          </p>
         </section>
         <section>
           <h3>Starting multiple servers at once</h3>
@@ -68,8 +72,13 @@
         <section>
           <h3>Starting a client</h3>
           <p>
-            You start a single client by invoking the command:<br/>
+            You start a single RPS client by invoking the command:<br/>
             <code>java -cp build\classes rps.RPSClient &lt;clientport&gt; [&lt;multicast ip&gt; &lt;multicast port&gt;]</code>
+            <br/>The multicast arguments are optional.
+          </p>
+          <p>
+            You may start a statistics gathering agent by invoking the command:<br/>
+            <code>java -cp build\classes rps.statistics.StatisticsClient &lt;clientport&gt; [&lt;multicast ip&gt; &lt;multicast port&gt;]</code>
             <br/>The multicast arguments are optional.
           </p>
         </section>
@@ -216,6 +225,17 @@
           RPS agents are stateful, message passing agents, taking advantage of all
           the capabilities of <em>BasicServer</em>.
         </p>
+        <section>
+          <h3>Statistics</h3>
+          <p>
+            To show agents taking advantage of special server support, there are
+            also special statistics gathering agents. These gather statistics stored
+            on StatisticServer servers regarding RPS tournaments.
+          </p>
+          <p>
+            All statistics related classes are stored under the <em>rps.statistics</em> package.
+          </p>
+        </section>
         <section>
           <h3>States</h3>
           <img src="states.png"/>
@@ -436,4 +456,3 @@
       </section>
   </body>
 </html>
-git-filter-branch --env-filter "export GIT_AUTHOR_NAME='New name'; export GIT_AUTHOR_EMAIL='New email'" HEAD

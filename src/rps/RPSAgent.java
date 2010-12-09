@@ -21,7 +21,7 @@ public class RPSAgent extends MessagingAgent implements Serializable {
     private final List<String> history;
 
     /**
-     * Insantiates a message passing agent
+     * Insantiates an RPS agent
      * @param clientAddress Home address
      * @param clientPort Home port
      */

@@ -1,6 +1,7 @@
 package rps.states;
 
 import agent.Agent;
+import agent.AgentServer;
 import agent.messaging.Message;
 import rps.Match;
 import rps.MessageTypes;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import rps.statistics.StatisticsServer;
 import rps.util.Tuple;
 
 /**
@@ -40,6 +42,7 @@ public class RunTournamentState extends agent.states.State<RPSAgent> {
         agent.log("Eventually, all games had been played.");
         List<Tuple<Peer, Integer>> sortedScoreTable = makeScoreBoard();
         sendStatistics(agent, agents, sortedScoreTable);
+        storeStatistics(agent, sortedScoreTable);
         logSummary(agent, sortedScoreTable);
         agent.log("And thus, the tournament was over.");
         agent.setState(new MoveHomeState());
@@ -172,6 +175,7 @@ public class RunTournamentState extends agent.states.State<RPSAgent> {
      * @param sortedScoreTable The score table
      */
     private void logSummary(RPSAgent agent, List<Tuple<Peer, Integer>> sortedScoreTable) {
+        agent.log("These were the final results: ");
         int position = 0;
         int lastScore = Integer.MAX_VALUE;
         for(Tuple<Peer, Integer> entry : sortedScoreTable) {
@@ -198,5 +202,21 @@ public class RunTournamentState extends agent.states.State<RPSAgent> {
                 ((RPSAgent)neighbour).postMessage(msg);
             }
         }
+    }
+
+    /**
+     * Stores statistics at the server, if possible.
+     * @param agent Tournament master
+     * @param sortedScoreTable Scoreboard
+     */
+    private void storeStatistics(RPSAgent agent, List<Tuple<Peer, Integer>> sortedScoreTable) {
+        AgentServer server = agent.getServer();
+        agent.log("I asked the owner of the local inn if he could write down the tournament outcome in his records.");
+        if(server instanceof StatisticsServer) {
+            ((StatisticsServer)server).storeTournament(sortedScoreTable);
+            agent.log("He gladly said he would.");
+        }
+        else
+            agent.log("But he said he did not keep track of such things. What a pity.");
     }
 }

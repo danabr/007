@@ -1,5 +1,6 @@
 package rps;
 
+import rps.statistics.StatisticsServer;
 import agent.server.BasicServer;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -24,7 +25,7 @@ public class ServerRunner {
                 int serverPort = 10000;
                 for(int i = 0; i < servers; i++) {
                     try {
-                        BasicServer server = new BasicServer(address, basePort, serverPort + i);
+                        BasicServer server = new StatisticsServer(address, basePort, serverPort + i);
                         Thread serverRunner = new Thread(server);
                         serverRunner.start();
                         System.out.println("Started server " + server.getId());
