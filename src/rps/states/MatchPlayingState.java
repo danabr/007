@@ -82,7 +82,7 @@ public class MatchPlayingState extends agent.states.State<RPSAgent> {
 
             if(myPosition == 1)
                 agent.log("I had won the tournament! What a splendid day it had been!");
-            else if(myPosition < position / 2)
+            else if(myPosition <= position / 2)
                 agent.log("I was quite content with my result.");
             else
                 agent.log("I was truly dissapointed with my performance.");

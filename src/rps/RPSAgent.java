@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.net.InetAddress;
 import java.util.List;
 import java.util.Set;
+import rps.states.GlobalState;
 
 /**
  * Agent playing Rock/Paper/Scissors
@@ -28,6 +29,7 @@ public class RPSAgent extends MessagingAgent implements Serializable {
         super(clientAddress, clientPort);
         this.stateMachine = new agent.states.StateMachine<RPSAgent>(this);
         this.stateMachine.setState(new rps.states.InitialState());
+        this.stateMachine.setGlobalState(new GlobalState(System.currentTimeMillis() + 30000));
         this.slaves = new java.util.HashSet<Peer>();
         this.history = new java.util.LinkedList<String>();
     }
