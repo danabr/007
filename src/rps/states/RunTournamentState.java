@@ -177,6 +177,7 @@ public class RunTournamentState extends agent.states.State<RPSAgent> {
         for(Tuple<Peer, Integer> entry : sortedScoreTable) {
             if(entry.b < lastScore)
                 position++;
+            lastScore = entry.b;
             agent.log(position + ". " + entry.a + ": "  + entry.b + " points.");
         }
     }

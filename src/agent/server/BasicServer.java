@@ -60,6 +60,14 @@ public class BasicServer extends AbstractServer implements Runnable {
     }
 
     /**
+     * @return A string representation of the server.
+     */
+    @Override
+    public String toString() {
+        return "BasicServer " + getId();
+    }
+
+    /**
      * Test program
      * @param args [0] serverPort [1] multicast IP [2] multicast port
      */

@@ -76,6 +76,7 @@ public class MatchPlayingState extends agent.states.State<RPSAgent> {
                     position++;
                 if(entry.a.equals(agent.getHome()))
                     myPosition = position;
+                lastScore = entry.b;
                 agent.log(position + ". " + entry.a + ": "  + entry.b + " points.");
             }
 

@@ -25,48 +25,9 @@ public class FindContinueState extends agent.states.State<RPSAgent> {
             if(slaves.size() >= 2) //Random
                 agent.log("Although I had enough participants to my tournament, I thought I would just visit one place more.");
             agent.log("I had a chat with the host if he knew any nearby places where I could find brave men to join my tournament.");
-            //Follow agent's we have not met before
-            List<Footprint> footprints = agent.getServer().getFootprints();
-            List<Peer> servers = agent.getServer().getNeighbours();
-            if(footprints.size() > 0 && servers.size() > 0) {
-                long currentTime = System.currentTimeMillis();
-                for(Footprint p : footprints) {
-                    if(currentTime - p.getTimestamp() < 2000 && //Don't follow old tracks
-                            !slaves.contains(p.getHome()) &&    //Only follow potential participants
-                            servers.contains(p.getDestination()) && //Must be able to move there
-                            !p.getHome().equals(agent.getHome())) { //Don't follow yourself
-                        agent.log("'I saw " + p.getHome() + " leave towards " + p.getDestination() + "', the host said, pointing with his thick arm.");
-                        agent.log("'He might be willing to join you.'");
-                        agent.log("I thanked the host and left the tavern quickly, in hope I would reach " + p.getDestination() + " in time.");
-                        agent.setState(new FindState());
-                        agent.migrate(p.getDestination());
-                        break;
-                    }
-                }
-            }
-            if(agent.currentState() == this) { //No one to follow
-                if(servers.size() > 0) {
-                    //Choose first server not already visited
-                    List<Peer> visited = agent.getVisitedServers();
-                    for(Peer server : servers) {
-                        if(!visited.contains(server)) {
-                            agent.log("'You could try " + server + "', the host said.");
-                            agent.log("I thanked him and moved on.");
-                            agent.setState(new FindState());
-                            agent.migrate(server);
-                            break;
-                        }
-                    }
-                    if(agent.currentState() == this) {
-                        agent.log("But I found out there were no new places to visit.");
-                        waitForLatecomers(agent);
-                    }
-                }
-                else { //No server to move to, prepare tournament
-                    agent.log("'I'm sorry', the host said. 'Around here is only wilderness.'");
-                    agent.log("I decided to give up searching, in hope that some of the participants would have brought their friends with them.");
-                    waitForLatecomers(agent);
-                }
+            
+            if(!followFootprints(agent)) { //No one to follow
+                moveToNonvisitedServer(agent);
             }
         }
         else {
@@ -81,5 +42,64 @@ public class FindContinueState extends agent.states.State<RPSAgent> {
     private void waitForLatecomers(RPSAgent agent) {
         agent.setState(new WaitForLatecomersState());
         agent.migrate(agent.getBattleServer());
+    }
+
+    /**
+     * Try to follow the footprints of an agent we have not met before.
+     * @param agent The agent
+     * @return true if we did follow some agent's footprints.
+     */
+    private boolean followFootprints(RPSAgent agent) {
+        List<Footprint> footprints = agent.getServer().getFootprints();
+        List<Peer> servers = agent.getServer().getNeighbours();
+        Set<Peer> slaves = agent.getSlaves();
+        if(footprints.size() > 0 && servers.size() > 0) {
+            long currentTime = System.currentTimeMillis();
+            for(Footprint p : footprints) {
+                if(currentTime - p.getTimestamp() < 2000 && //Don't follow old tracks
+                        !slaves.contains(p.getHome()) &&    //Only follow potential participants
+                        servers.contains(p.getDestination()) && //Must be able to move there
+                        !p.getHome().equals(agent.getHome())) { //Don't follow yourself
+                    agent.log("'I saw " + p.getHome() + " leave towards " + p.getDestination() + "', the host said, pointing with his thick arm.");
+                    agent.log("'He might be willing to join you.'");
+                    agent.log("I thanked the host and left the tavern quickly, in hope I would reach " + p.getDestination() + " in time.");
+                    agent.setState(new FindState());
+                    agent.migrate(p.getDestination());
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Choose a server the agent has not visited before, and move to it.
+     * If no such server is available, prepare to hold the tournament.
+     * @param agent The agent
+     */
+    private void moveToNonvisitedServer(RPSAgent agent) {
+        List<Peer> servers = agent.getServer().getNeighbours();
+        if(servers.size() > 0) {
+            //Choose first server not already visited
+            List<Peer> visited = agent.getVisitedServers();
+            for(Peer server : servers) {
+                if(!visited.contains(server)) {
+                    agent.log("'You could try " + server + "', the host said.");
+                    agent.log("I thanked him and moved on.");
+                    agent.setState(new FindState());
+                    agent.migrate(server);
+                    break;
+                }
+            }
+            if(agent.currentState() == this) {
+                agent.log("But I found out there were no new places to visit.");
+                waitForLatecomers(agent);
+            }
+        }
+        else { //No server to move to, prepare tournament
+            agent.log("'I'm sorry', the host said. 'Around here is only wilderness.'");
+            agent.log("I decided to give up searching, in hope that some of the participants would have brought their friends with them.");
+            waitForLatecomers(agent);
+        }
     }
 }

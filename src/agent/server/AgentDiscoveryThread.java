@@ -33,23 +33,18 @@ public class AgentDiscoveryThread extends Thread{
         this.interval = interval;
     }
 
+    /**
+     * Runs neighbour discovery.
+     */
     @Override
     public void run() {
-        int serverPort = owner.getId().port;
+        Peer serverID = owner.getId();
         while(true) {
             try {
                 DiscoveryClient dc = new DiscoveryClient(multicastAddress, multicastPort);
                 List<Peer> discoveryResult = dc.getDiscoveryResult();
-
-                // Remove local host
-                String localIP = InetAddress.getLocalHost().getHostAddress();
-                for(Peer p : discoveryResult) {
-                    if(p.port == serverPort && p.ip.getHostAddress().equals(localIP)) {
-                        discoveryResult.remove(p);
-                        break;
-                    }
-                }
-
+                
+                discoveryResult.remove(serverID); // Exclude local host
                 owner.updateNeighbourList(discoveryResult);
                 Thread.sleep(interval);
             }
